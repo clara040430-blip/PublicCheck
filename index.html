@@ -3,346 +3,449 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>안심워크 통합 시뮬레이터</title>
+<title>안심워크 통합 시뮬레이터 - 어드밴스드</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
 <style>
   :root { --p: #0f172a; --s: #2563eb; --a: #10b981; --bg: #f8fafc; }
-  body { margin: 0; background: #e2e8f0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
-  .app-container { width: 100%; max-width: 430px; height: 100dvh; background: var(--bg); position: relative; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); display: flex; flex-direction: column; }
+  body { margin: 0; background: #cbd5e1; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+  .app-container { width: 100%; max-width: 430px; height: 100dvh; background: var(--bg); position: relative; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); display: flex; flex-direction: column; }
   
-  /* Top Simulator Control Bar */
-  .sim-bar { background: #1e293b; color: white; padding: 10px; font-size: 11px; display: flex; gap: 8px; justify-content: space-between; align-items: center; z-index: 50; }
-  .sim-btn { background: #334155; padding: 4px 8px; border-radius: 6px; cursor: pointer; transition: 0.2s; border: 1px solid #475569; }
-  .sim-btn:hover { background: #475569; }
-  .sim-btn.active { background: #ef4444; color: white; border-color: #ef4444; }
+  /* Top Simulator Control Bar (Global Event Trigger) */
+  .sim-bar { background: #0f172a; color: white; padding: 12px; font-size: 11px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: space-between; align-items: center; z-index: 50; border-bottom: 2px solid #334155; }
+  .sim-title { font-weight: 900; color: #38bdf8; width: 100%; margin-bottom: 4px; display: flex; justify-content: space-between; }
+  .sim-btn { background: #1e293b; padding: 6px 10px; border-radius: 6px; cursor: pointer; transition: 0.2s; border: 1px solid #475569; font-weight: bold; flex: 1; text-align: center; }
+  .sim-btn:hover { background: #334155; }
+  .sim-btn.active-red { background: #ef4444; color: white; border-color: #ef4444; }
+  .sim-btn.active-blue { background: #3b82f6; color: white; border-color: #3b82f6; }
 
   /* App Shell */
-  .header { padding: 15px 20px; background: white; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; }
-  .content { flex: 1; overflow-y: auto; padding: 20px; padding-bottom: 90px; }
-  .bottom-nav { position: absolute; bottom: 0; width: 100%; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-top: 1px solid #e2e8f0; display: flex; padding: 10px 0 20px 0; z-index: 40; }
-  .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; font-size: 10px; color: #64748b; font-weight: 600; cursor: pointer; gap: 4px; }
-  .nav-item.active { color: var(--s); }
+  .header { padding: 18px 20px; background: white; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; }
+  .content { flex: 1; overflow-y: auto; padding: 20px; padding-bottom: 100px; background: #f1f5f9; }
+  .bottom-nav { position: absolute; bottom: 0; width: 100%; background: rgba(255, 255, 255, 0.98); border-top: 1px solid #e2e8f0; display: flex; padding: 12px 0 24px 0; z-index: 40; box-shadow: 0 -4px 15px rgba(0,0,0,0.03); }
+  .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; font-size: 11px; color: #94a3b8; font-weight: 800; cursor: pointer; gap: 6px; transition: 0.3s; }
+  .nav-item.active { color: var(--s); transform: translateY(-2px); }
   
   /* Cards & Utilities */
-  .card { background: white; border-radius: 16px; padding: 16px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); margin-bottom: 16px; border: 1px solid #f1f5f9; }
-  .card-blue { background: linear-gradient(135deg, #1e3a8a, #2563eb); color: white; border: none; }
-  .btn { width: 100%; padding: 14px; border-radius: 12px; font-weight: bold; text-align: center; cursor: pointer; transition: 0.2s; }
-  .btn-primary { background: var(--s); color: white; }
-  .btn-outline { border: 2px solid var(--s); color: var(--s); }
+  .card { background: white; border-radius: 18px; padding: 20px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04); margin-bottom: 16px; }
+  .card-gradient { background: linear-gradient(135deg, #1e3a8a, #3b82f6); color: white; border: none; }
+  .btn { width: 100%; padding: 16px; border-radius: 14px; font-weight: 900; text-align: center; cursor: pointer; transition: 0.2s; font-size: 14px; }
+  .btn-primary { background: var(--s); color: white; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); }
+  .btn-dark { background: #0f172a; color: white; }
+  .btn-outline { border: 2px solid var(--s); color: var(--s); background: transparent; }
   .hidden { display: none !important; }
   
   /* Modals */
-  .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(4px); z-index: 100; display: none; justify-content: center; align-items: center; padding: 20px; }
-  .modal-content { background: white; width: 100%; max-width: 340px; border-radius: 20px; padding: 24px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); transform: translateY(20px); opacity: 0; transition: 0.3s; }
+  .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(5px); z-index: 100; display: none; justify-content: center; align-items: center; padding: 20px; }
+  .modal-content { background: white; width: 100%; max-width: 350px; border-radius: 24px; padding: 28px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); transform: scale(0.95); opacity: 0; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
   .modal-overlay.show { display: flex; }
-  .modal-overlay.show .modal-content { transform: translateY(0); opacity: 1; }
+  .modal-overlay.show .modal-content { transform: scale(1); opacity: 1; }
 
-  /* Canvas */
-  canvas { border: 2px dashed #cbd5e1; border-radius: 12px; width: 100%; height: 150px; background: #f8fafc; cursor: crosshair; }
+  /* Interactive Elements */
+  canvas { border: 2px dashed #cbd5e1; border-radius: 12px; width: 100%; height: 160px; background: #f8fafc; cursor: crosshair; }
+  
+  /* Radar Animation */
+  .radar-container { position: relative; width: 100%; height: 200px; background: #020617; border-radius: 16px; overflow: hidden; display: flex; justify-content: center; align-items: center; }
+  .radar-sweep { position: absolute; width: 100px; height: 100px; background: conic-gradient(from 0deg, rgba(16, 185, 129, 0) 70%, rgba(16, 185, 129, 0.4) 100%); border-radius: 100% 0 0 0; transform-origin: bottom right; top: 0; left: 50%; animation: spin 2s linear infinite; border-right: 2px solid #10b981; }
+  .radar-grid { position: absolute; width: 180px; height: 180px; border: 1px solid #334155; border-radius: 50%; }
+  .radar-grid::before { content:''; position:absolute; width: 120px; height: 120px; border: 1px solid #334155; border-radius: 50%; top: 29px; left: 29px; }
+  .dot { position: absolute; width: 8px; height: 8px; border-radius: 50%; background: #38bdf8; box-shadow: 0 0 8px #38bdf8; transition: all 1s ease-in-out; }
+  .dot-red { background: #ef4444 !important; box-shadow: 0 0 12px #ef4444 !important; animation: pulse 1s infinite; }
+  
+  /* Hash Console */
+  .hash-console { background: #020617; color: #10b981; font-family: 'Courier New', Courier, monospace; font-size: 10px; padding: 12px; border-radius: 12px; height: 130px; overflow-y: auto; box-shadow: inset 0 4px 6px rgba(0,0,0,0.5); }
+  .hash-line { margin-bottom: 4px; border-bottom: 1px dashed #1e293b; padding-bottom: 2px; }
 
-  /* Animations */
-  @keyframes scan { 0% { top: 10%; } 50% { top: 90%; } 100% { top: 10%; } }
-  .scanner-line { position: absolute; width: 80%; height: 2px; background: #22c55e; box-shadow: 0 0 10px #22c55e; left: 10%; animation: scan 2s infinite ease-in-out; }
-  .qr-box { position: relative; width: 160px; height: 160px; margin: 0 auto; background: #fff; border-radius: 12px; display: grid; place-items: center; border: 4px solid #e2e8f0; }
+  @keyframes spin { 100% { transform: rotate(360deg); } }
+  @keyframes scan { 0%, 100% { top: 10%; } 50% { top: 90%; } }
+  @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.5); opacity: 0.7; } }
+  .scanner-line { position: absolute; width: 80%; height: 3px; background: #22c55e; box-shadow: 0 0 15px #22c55e; left: 10%; animation: scan 2.5s ease-in-out infinite; }
 </style>
 </head>
 <body>
 
 <div class="app-container">
-  <!-- 시뮬레이션 제어 바 -->
+  <!-- 시뮬레이터 글로벌 이벤트 바 -->
   <div class="sim-bar">
-    <div style="font-weight:bold;color:#94a3b8">관제 시뮬레이터</div>
-    <div class="flex gap-2">
-      <button id="sim-offline" class="sim-btn" onclick="toggleOffline()">🌐 통신단절</button>
-      <button class="sim-btn" onclick="triggerPush()">🔔 비정형 푸시</button>
-      <button class="sim-btn" onclick="triggerAnomaly()">🚨 이상치 탐지</button>
-    </div>
+    <div class="sim-title"><span>⚙️ 시스템 이벤트 관제</span> <span id="sim-clock" class="text-slate-400">00:00:00</span></div>
+    <button id="btn-offline" class="sim-btn" onclick="toggleOffline()">🌐 통신망 단절</button>
+    <button class="sim-btn text-blue-300" onclick="triggerPush()">🔔 랜덤 푸시</button>
+    <button class="sim-btn text-red-300" onclick="triggerAnomaly()">🚨 시공간 이상치</button>
+    <button class="sim-btn text-yellow-300" onclick="triggerGroupDeviation()">🚶 그룹 이탈</button>
   </div>
 
   <!-- 헤더 -->
-  <div class="header" id="app-header">
+  <div class="header">
     <div class="flex items-center gap-2">
-      <span class="material-symbols-outlined text-blue-600">shield_moon</span>
-      <h1 class="font-bold text-lg text-slate-800 tracking-tight" id="header-title">안심워크</h1>
+      <span class="material-symbols-outlined text-blue-600 text-3xl">shield_moon</span>
+      <div>
+        <h1 class="font-black text-xl text-slate-800 leading-tight" id="header-title">안심워크</h1>
+        <p class="text-[10px] text-slate-500 font-bold" id="header-sub">개인정보 최소수집형 현장검증</p>
+      </div>
     </div>
-    <div class="text-xs font-bold text-slate-400 bg-slate-100 px-2 py-1 rounded-full" id="role-badge">역할 선택</div>
+    <div class="text-[10px] font-black text-white bg-slate-800 px-3 py-1.5 rounded-lg shadow-md" id="role-badge">계정선택</div>
   </div>
 
-  <!-- 메인 콘텐츠 영역 -->
+  <!-- 메인 콘텐츠 -->
   <div class="content" id="main-content">
     
-    <!-- 1. 로그인 뷰 -->
-    <div id="view-login" class="h-full flex flex-col justify-center pb-20">
-      <div class="text-center mb-8">
-        <h2 class="text-2xl font-bold text-slate-800 mb-2">접속 계정 선택</h2>
-        <p class="text-xs text-slate-500">개인정보 최소수집형 현장 검증 시스템</p>
+    <!-- 1. 로그인 (Role Selection) -->
+    <div id="view-login" class="h-full flex flex-col justify-center">
+      <div class="text-center mb-10">
+        <h2 class="text-2xl font-black text-slate-800 mb-2">운영 모드 선택</h2>
+        <p class="text-xs text-slate-500 font-bold">특허 명세서 기재 전 기능 시뮬레이션</p>
       </div>
-      <div class="flex flex-col gap-3">
-        <button class="card flex items-center gap-4 hover:border-blue-500 transition" onclick="login('participant')">
-          <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold">참여</div>
+      
+      <div class="flex flex-col gap-4">
+        <button class="card flex items-center gap-4 hover:border-blue-500 border-2 border-transparent transition p-5" onclick="login('participant')">
+          <div class="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600 font-black text-lg">P</div>
           <div class="text-left">
-            <div class="font-bold text-slate-800">일반 참여자 (홍예진 님)</div>
-            <div class="text-xs text-slate-500">제1/제2 유입 경로 단말기 시연</div>
+            <div class="font-black text-slate-800 text-lg">일반 참여자 (윤정환 님)</div>
+            <div class="text-xs text-slate-500 font-bold mt-1">제1모드 QR / 제2모드 스냅샷 / 다변화 인증</div>
           </div>
         </button>
-        <button class="card flex items-center gap-4 hover:border-emerald-500 transition" onclick="login('leader')">
-          <div class="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600 font-bold">리더</div>
+        
+        <button class="card flex items-center gap-4 hover:border-emerald-500 border-2 border-transparent transition p-5" onclick="login('leader')">
+          <div class="w-14 h-14 bg-emerald-100 rounded-2xl flex items-center justify-center text-emerald-600 font-black text-lg">L</div>
           <div class="text-left">
-            <div class="font-bold text-slate-800">현장 리더 (김안심 님)</div>
-            <div class="text-xs text-slate-500">QR 표출, 서명 대행, 그룹 간격 관제</div>
+            <div class="font-black text-slate-800 text-lg">현장 리더 (김안심 님)</div>
+            <div class="text-xs text-slate-500 font-bold mt-1">30초 동적 토큰 / 그룹 적응형 분석 / 대행 서명</div>
           </div>
         </button>
-        <button class="card flex items-center gap-4 hover:border-purple-500 transition" onclick="login('admin')">
-          <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 font-bold">관리</div>
+        
+        <button class="card flex items-center gap-4 hover:border-purple-500 border-2 border-transparent transition p-5" onclick="login('admin')">
+          <div class="w-14 h-14 bg-purple-100 rounded-2xl flex items-center justify-center text-purple-600 font-black text-lg">A</div>
           <div class="text-left">
-            <div class="font-bold text-slate-800">지자체 관리자</div>
-            <div class="text-xs text-slate-500">차등 정산 및 영구 파기(Purge) 시연</div>
+            <div class="font-black text-slate-800 text-lg">지자체 행정 관리자</div>
+            <div class="text-xs text-slate-500 font-bold mt-1">가중치 차등 정산 / 개인정보 영구 파기(Purge)[cite: 1]</div>
           </div>
         </button>
       </div>
     </div>
 
-    <!-- ==================== 참여자 (홍예진) 뷰 ==================== -->
+    <!-- ==================== 윤정환 (참여자) 뷰 ==================== -->
     <div id="view-p-home" class="hidden">
-      <div class="card-blue card relative overflow-hidden">
-        <div class="absolute -right-4 -top-4 opacity-10"><span class="material-symbols-outlined" style="font-size:100px">school</span></div>
-        <p class="text-blue-200 text-xs font-bold mb-1">오늘의 공익 챌린지</p>
-        <h2 class="text-xl font-bold mb-4">통학로 안전 도우미</h2>
-        <div class="flex gap-4">
-          <div><p class="text-xs text-blue-200">진행시간</p><p class="font-bold" id="p-timer">00:00:00</p></div>
-          <div><p class="text-xs text-blue-200">예상가중치</p><p class="font-bold text-yellow-300">1.5배</p></div>
+      <div class="card-gradient card relative overflow-hidden mb-5">
+        <span class="material-symbols-outlined absolute -right-4 -top-4 opacity-20 text-[120px]">policy</span>
+        <div class="flex justify-between items-start mb-2">
+          <span class="bg-blue-900 bg-opacity-50 text-blue-200 text-[10px] font-black px-2 py-1 rounded">제1모드 진행중</span>
+          <span class="text-yellow-300 text-[10px] font-black border border-yellow-300 px-2 py-1 rounded">1.5배 가중치[cite: 1]</span>
+        </div>
+        <h2 class="text-2xl font-black mb-1">통학로 안전 도우미</h2>
+        <p class="text-blue-200 text-xs font-bold mb-5">광주광역시 서구 2조 현장</p>
+        
+        <div class="flex justify-between items-end border-t border-blue-500 pt-4">
+          <div><p class="text-[10px] text-blue-300 font-bold">누적 시간</p><p class="text-xl font-black font-mono" id="p-timer">00:00:00</p></div>
+          <div><p class="text-[10px] text-blue-300 font-bold text-right">오프라인 큐 패킷</p><p class="text-xl font-black text-right" id="p-queue-cnt">0</p></div>
         </div>
       </div>
       
-      <h3 class="font-bold text-slate-800 mb-3 text-sm flex items-center gap-2"><span class="material-symbols-outlined text-sm">verified_user</span> 실시간 보안 현황</h3>
-      <div class="grid grid-cols-2 gap-3 mb-6">
-        <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm text-center">
-          <p class="text-xs text-slate-500 mb-1">저장된 GPS 좌표</p>
-          <p class="font-black text-lg text-emerald-600">0건</p>
+      <h3 class="font-black text-slate-800 mb-3 text-sm flex items-center gap-1"><span class="material-symbols-outlined text-base">memory</span> 오프라인 단조 시계 & 해시 블록[cite: 1]</h3>
+      <div class="card p-0 overflow-hidden mb-6 border-2 border-slate-800">
+        <div class="bg-slate-800 text-slate-400 text-[10px] p-2 flex justify-between font-bold">
+          <span>Tick(단조시계)</span><span>FIFO Queue (Hash Chaining)</span>
         </div>
-        <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm text-center">
-          <p class="text-xs text-slate-500 mb-1">스냅샷 파기 건수</p>
-          <p class="font-black text-lg text-blue-600">3건</p>
+        <div class="hash-console" id="hash-log">
+          <div class="hash-line text-slate-500">Tick_0: H_0 = Init_State</div>
         </div>
       </div>
-
-      <div class="card bg-slate-50">
-        <p class="text-xs font-bold text-slate-500 mb-2">오프라인 타임라인 큐 (단조시계)</p>
-        <div id="hash-chain-log" class="text-[10px] font-mono text-slate-400 bg-slate-900 p-2 rounded max-h-24 overflow-y-auto">
-          Tick_0: H_0 = Hash(Init)<br>
+      
+      <div class="grid grid-cols-2 gap-3">
+        <div class="card p-4 text-center bg-emerald-50 border-emerald-100">
+          <span class="material-symbols-outlined text-emerald-500 text-3xl mb-1">location_off</span>
+          <p class="text-[10px] font-black text-emerald-700">GPS 상시 수집</p>
+          <p class="text-xl font-black text-emerald-600 mt-1">0% (차단)[cite: 1]</p>
+        </div>
+        <div class="card p-4 text-center bg-blue-50 border-blue-100">
+          <span class="material-symbols-outlined text-blue-500 text-3xl mb-1">delete_sweep</span>
+          <p class="text-[10px] font-black text-blue-700">스냅샷 즉시파기</p>
+          <p class="text-xl font-black text-blue-600 mt-1">4건[cite: 1]</p>
         </div>
       </div>
     </div>
 
     <div id="view-p-auth" class="hidden">
-      <h2 class="text-lg font-bold text-slate-800 mb-4">현장 검증 유입 경로</h2>
+      <h2 class="text-xl font-black text-slate-800 mb-1">현장 검증 유입 경로 다변화</h2>
+      <p class="text-xs font-bold text-slate-500 mb-5">상황에 맞는 경로(A, B-1, B-2)를 선택하세요.[cite: 1]</p>
       
-      <div class="flex gap-2 mb-4 overflow-x-auto pb-2" id="auth-tabs">
-        <button class="px-4 py-2 bg-blue-600 text-white text-xs font-bold rounded-full whitespace-nowrap" onclick="switchAuthTab(1)">A. QR 상호인식</button>
-        <button class="px-4 py-2 bg-slate-100 text-slate-600 text-xs font-bold rounded-full whitespace-nowrap" onclick="switchAuthTab(2)">B-1. 암호입력</button>
-        <button class="px-4 py-2 bg-slate-100 text-slate-600 text-xs font-bold rounded-full whitespace-nowrap" onclick="switchAuthTab(3)">B-2. ARS 다이얼</button>
+      <div class="flex gap-2 mb-5 bg-slate-200 p-1 rounded-xl" id="auth-tabs">
+        <button class="flex-1 py-2 text-xs font-black rounded-lg transition bg-white text-blue-600 shadow-sm" onclick="switchTab(1)">A. 동적 QR</button>
+        <button class="flex-1 py-2 text-xs font-black rounded-lg transition text-slate-500 hover:bg-slate-300" onclick="switchTab(2)">B-1. 암호입력</button>
+        <button class="flex-1 py-2 text-xs font-black rounded-lg transition text-slate-500 hover:bg-slate-300" onclick="switchTab(3)">B-2. ARS</button>
       </div>
 
-      <!-- Tab 1: QR -->
-      <div id="auth-tab-1" class="card text-center py-8">
-        <p class="text-xs text-slate-500 font-bold mb-4">완전 비위치추적 제1모드</p>
-        <div class="qr-box bg-slate-900 mb-6">
-          <span class="material-symbols-outlined text-white" style="font-size:100px">qr_code_scanner</span>
+      <!-- 제1모드 완전 비위치추적 QR -->
+      <div id="tab-1" class="card text-center py-8">
+        <p class="text-xs text-blue-600 font-black bg-blue-50 py-1 px-3 rounded-full inline-block mb-4">제1모드 (완전 비위치추적)</p>
+        <div class="relative w-48 h-48 mx-auto bg-slate-900 rounded-2xl grid place-items-center mb-6 overflow-hidden border-4 border-slate-200 shadow-inner">
+          <span class="material-symbols-outlined text-slate-700" style="font-size:120px">qr_code_2</span>
           <div class="scanner-line"></div>
         </div>
-        <button class="btn btn-primary" onclick="showModal('qr-success')">리더 QR 스캔하기</button>
+        <button class="btn btn-primary" onclick="simulateAuth('QR_SCAN', '제1 유입 경로(A) 승인', '동적 식별코드 토큰이 일치하여 위치좌표 수집 없이 동시 재실이 증명되었습니다.[cite: 1]')">현장 리더 QR 스캔하기</button>
       </div>
 
-      <!-- Tab 2: PIN + Cell ID -->
-      <div id="auth-tab-2" class="card hidden text-center py-6">
-        <p class="text-xs font-bold text-blue-600 mb-2">단말기 미숙련자 지원 경로</p>
-        <p class="text-sm text-slate-600 font-bold mb-6">리더가 구두로 공유한 2자리 암호와<br>기지국(Cell-ID) 대사를 진행합니다.</p>
-        <input type="number" id="pin-input" placeholder="암호 2자리 입력" class="w-full bg-slate-100 p-4 rounded-xl text-center text-2xl font-black mb-4 outline-none border-2 focus:border-blue-500">
-        <button class="btn btn-primary" onclick="verifyPIN()">Cell-ID 대사 및 인증</button>
+      <!-- 리더 PIN & 기지국 대사 -->
+      <div id="tab-2" class="card hidden text-center py-6">
+        <span class="material-symbols-outlined text-4xl text-slate-800 mb-2">password</span>
+        <h3 class="font-black text-slate-800 mb-2">리더 발급 암호 검증</h3>
+        <p class="text-xs text-slate-500 font-bold mb-6">리더가 구두 공유한 30초 동적 PIN과<br>통신망 기지국(Cell-ID)을 대사합니다.[cite: 1]</p>
+        
+        <input type="number" id="pin-input" placeholder="암호 2자리" class="w-full bg-slate-100 p-4 rounded-xl text-center text-3xl font-black mb-4 border-2 border-slate-200 focus:border-blue-500 outline-none">
+        <button class="btn bg-slate-800 text-white" onclick="verifyPIN()">Cell-ID 대사 및 인증</button>
       </div>
 
-      <!-- Tab 3: ARS -->
-      <div id="auth-tab-3" class="card hidden text-center py-6 bg-slate-800 text-white">
-        <span class="material-symbols-outlined text-4xl mb-2 text-emerald-400">dialpad</span>
-        <p class="text-sm font-bold mb-2">폴더폰 소지자용 ARS 발신</p>
-        <p class="text-xs text-slate-400 mb-6">발신자번호(CID)와 기지국 위치를 검증합니다.</p>
-        <button class="btn bg-emerald-500 text-white font-bold" onclick="showModal('ars-call')">1855-0000 가상 통화 연결</button>
+      <!-- 폴더폰 ARS 다이얼 -->
+      <div id="tab-3" class="card hidden text-center py-6 bg-slate-800 text-white">
+        <span class="material-symbols-outlined text-5xl mb-2 text-emerald-400">dialpad</span>
+        <h3 class="font-black text-lg mb-2">ARS 통화 다이얼 검증</h3>
+        <p class="text-xs text-slate-400 font-bold mb-6">폴더폰 소지자용. 발신자번호(CID)와<br>입력된 다이얼 번호를 검증합니다.[cite: 1]</p>
+        <button class="btn bg-emerald-500 text-white border border-emerald-400" onclick="simulateAuth('ARS_DIAL', 'ARS 다이얼 검증 완료', '발신자 번호(CID)와 기지국 위치가 성공적으로 대사되었습니다.[cite: 1]')">1855-0000 가상 통화 발신</button>
       </div>
     </div>
 
-    <!-- ==================== 리더 (김안심) 뷰 ==================== -->
+    <!-- ==================== 김안심 (현장 리더) 뷰 ==================== -->
     <div id="view-l-home" class="hidden">
-      <h2 class="text-lg font-bold text-slate-800 mb-4">5인 1조 상호 간격 분석</h2>
-      <div class="card bg-slate-900 text-white relative h-48 flex items-center justify-center overflow-hidden">
-        <div class="absolute w-24 h-24 border border-slate-600 rounded-full animate-ping opacity-20"></div>
-        <div class="absolute w-48 h-48 border border-slate-700 rounded-full"></div>
-        <span class="material-symbols-outlined text-emerald-400 z-10" style="font-size:32px">accessibility_new</span>
-        <!-- 조원 점들 -->
-        <div class="absolute w-3 h-3 bg-blue-400 rounded-full" style="top: 40%; left: 45%;"></div>
-        <div class="absolute w-3 h-3 bg-blue-400 rounded-full" style="top: 55%; left: 60%;"></div>
-        <div class="absolute w-3 h-3 bg-blue-400 rounded-full" style="top: 60%; left: 35%;"></div>
-        <div class="absolute w-3 h-3 bg-red-400 rounded-full hidden shadow-[0_0_15px_#ef4444]" id="radar-anomaly" style="top: 10%; left: 80%;"></div>
-      </div>
-      <div class="flex justify-between items-center text-xs font-bold text-slate-500 mb-4 px-2">
-        <span>정상 군집: 푸시 주기 연장됨</span>
-        <span id="radar-status" class="text-emerald-600 bg-emerald-100 px-2 py-1 rounded">정상</span>
+      <h2 class="text-xl font-black text-slate-800 mb-1">적응형 그룹 간격 분석부[cite: 1]</h2>
+      <p class="text-xs font-bold text-slate-500 mb-4">5인 1조 상호 거리에 따른 푸시 주기 자동 제어</p>
+      
+      <div class="card p-0 overflow-hidden mb-6">
+        <div class="radar-container" id="radar">
+          <div class="radar-grid"></div>
+          <div class="radar-sweep"></div>
+          <span class="material-symbols-outlined text-slate-500 absolute z-10" style="font-size:40px">my_location</span>
+          
+          <!-- 정상 군집 조원 (반경 30m 이내) -->
+          <div class="dot" style="top: 45%; left: 45%;"></div>
+          <div class="dot" style="top: 55%; left: 55%;"></div>
+          <div class="dot" style="top: 35%; left: 52%;"></div>
+          <div class="dot" style="top: 60%; left: 40%;"></div>
+          <!-- 이탈 대상 조원 (윤정환 님) -->
+          <div class="dot" id="target-dot" style="top: 40%; left: 40%;"></div>
+        </div>
+        <div class="bg-slate-50 p-4 border-t border-slate-100 flex justify-between items-center">
+          <div>
+            <p class="text-[10px] font-black text-slate-500 mb-1">시스템 판정 상태</p>
+            <p class="text-sm font-black text-emerald-600" id="radar-msg">정상 군집 (푸시 주기 연장됨)[cite: 1]</p>
+          </div>
+          <span class="material-symbols-outlined text-emerald-500 text-3xl" id="radar-icon">check_circle</span>
+        </div>
       </div>
 
-      <h3 class="font-bold text-slate-800 mb-3 text-sm">리더 기능</h3>
       <div class="grid grid-cols-2 gap-3">
-        <button class="card text-center hover:border-blue-500 transition" onclick="navTo('view-l-qr')">
-          <span class="material-symbols-outlined text-blue-600 mb-2">qr_code</span>
-          <p class="text-xs font-bold">동적 QR 표출</p>
+        <button class="card text-center hover:border-blue-500 transition border-2 border-transparent" onclick="navTo('view-l-qr')">
+          <span class="material-symbols-outlined text-blue-600 mb-2 text-3xl">qr_code_2</span>
+          <p class="text-xs font-black">동적 QR 표출</p>
         </button>
-        <button class="card text-center hover:border-purple-500 transition" onclick="navTo('view-l-sign')">
-          <span class="material-symbols-outlined text-purple-600 mb-2">draw</span>
-          <p class="text-xs font-bold">보조 서명 대행</p>
+        <button class="card text-center hover:border-purple-500 transition border-2 border-transparent" onclick="navTo('view-l-sign')">
+          <span class="material-symbols-outlined text-purple-600 mb-2 text-3xl">draw</span>
+          <p class="text-xs font-black">보조 서명 대행</p>
         </button>
       </div>
     </div>
 
+    <!-- 리더: QR 및 PIN 발급기 -->
     <div id="view-l-qr" class="hidden">
       <div class="card text-center py-8">
-        <h2 class="text-lg font-bold text-slate-800 mb-2">동적 식별코드 상호인식</h2>
-        <p class="text-xs text-slate-500 mb-6 font-bold">30초 단위 시변 토큰 갱신[cite: 1]</p>
+        <h2 class="text-xl font-black text-slate-800 mb-1">시변 동적 식별코드[cite: 1]</h2>
+        <p class="text-xs text-slate-500 font-bold mb-6">30초 단위로 갱신되는 1회용 난수 토큰</p>
         
-        <div class="qr-box bg-white mb-6">
-          <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=AnsimToken123" id="dynamic-qr" class="w-full h-full p-2 rounded-xl">
+        <div class="relative w-48 h-48 mx-auto bg-white rounded-2xl grid place-items-center mb-6 border-4 border-blue-100 p-2">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=Ansim_Token_Initialize" id="dynamic-qr-img" class="w-full h-full opacity-90 transition-opacity">
         </div>
         
-        <div class="w-full bg-slate-100 rounded-full h-2 mb-4">
-          <div class="bg-blue-600 h-2 rounded-full" id="qr-progress" style="width: 100%"></div>
+        <div class="flex justify-between text-[10px] font-black text-blue-600 mb-1 px-1">
+          <span>갱신 남은 시간</span><span id="qr-sec">30초</span>
+        </div>
+        <div class="w-full bg-slate-100 rounded-full h-3 mb-6 overflow-hidden">
+          <div class="bg-blue-500 h-full rounded-full transition-all duration-1000 ease-linear" id="qr-bar" style="width: 100%"></div>
         </div>
         
-        <div class="bg-slate-50 p-4 rounded-xl text-left">
-          <p class="text-xs font-bold text-blue-600 mb-1">서브경로 B-1 용 동적 PIN</p>
-          <div class="text-3xl font-black text-slate-800 tracking-widest text-center" id="dynamic-pin">57</div>
+        <div class="bg-slate-800 p-5 rounded-2xl text-left flex items-center justify-between">
+          <div>
+            <p class="text-[10px] font-black text-slate-400 mb-1">B-1 경로 암호(Cell-ID 대사용)[cite: 1]</p>
+            <p class="text-xs font-bold text-slate-500">참여자에게 구두 공유</p>
+          </div>
+          <div class="text-4xl font-black text-emerald-400 tracking-widest" id="dynamic-pin">57</div>
         </div>
       </div>
     </div>
 
+    <!-- 리더: 보조 서명 대행 (B-3) -->
     <div id="view-l-sign" class="hidden">
       <div class="card">
-        <h2 class="text-lg font-bold text-slate-800 mb-2">제2 유입 경로 (B-3) 보조 서명</h2>
-        <p class="text-xs text-slate-500 font-bold mb-4">단말기 미소지자 현장 대행[cite: 1]</p>
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-lg font-black text-slate-800">단말기 미소지자 서명[cite: 1]</h2>
+          <span class="bg-purple-100 text-purple-600 text-[10px] font-black px-2 py-1 rounded">경로 B-3</span>
+        </div>
         
-        <select class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg mb-4 text-sm font-bold text-slate-700 outline-none">
+        <select class="w-full p-4 bg-slate-50 border-2 border-slate-200 rounded-xl mb-4 text-sm font-black text-slate-700 outline-none focus:border-purple-500">
           <option>대상 조원 선택</option>
-          <option>이순자 (단말기 미소지)</option>
+          <option>이순자 (2G폰 미소지)</option>
           <option>박영수 (배터리 방전)</option>
         </select>
 
-        <p class="text-xs font-bold text-slate-700 mb-2">수기 서명 입력</p>
-        <canvas id="sign-pad" class="mb-4"></canvas>
-        <button class="btn btn-primary" onclick="submitSign()">대행 인증 패킷 전송</button>
+        <div class="bg-slate-100 p-2 rounded-xl mb-6">
+          <p class="text-[10px] font-black text-slate-500 mb-2 pl-2">터치스크린 수기 서명 입력</p>
+          <canvas id="sign-pad"></canvas>
+        </div>
+        
+        <button class="btn bg-purple-600 text-white shadow-[0_4px_12px_rgba(147,51,234,0.3)]" onclick="submitSign()">대행 플래그 패킷 생성 및 전송</button>
       </div>
     </div>
 
-    <!-- ==================== 관리자 뷰 ==================== -->
+    <!-- ==================== 지자체 관리자 뷰 ==================== -->
     <div id="view-a-home" class="hidden">
-      <div class="card-blue card mb-6">
-        <h2 class="text-xl font-bold mb-2">멀티테넌트 정산 관제</h2>
-        <p class="text-blue-200 text-xs">지자체 행정 및 지역화폐 연동망[cite: 1]</p>
-      </div>
+      <h2 class="text-xl font-black text-slate-800 mb-4">멀티테넌트 통합 관제[cite: 1]</h2>
+      
+      <select class="w-full p-4 bg-white border-2 border-slate-200 rounded-xl mb-6 text-sm font-black text-slate-800 shadow-sm outline-none">
+        <option>🏢 광주광역시청 행정망</option>
+        <option>🏢 서울특별시청 행정망</option>
+        <option>🏢 부산광역시청 행정망</option>
+      </select>
 
-      <div class="card border-l-4 border-l-blue-500">
-        <div class="flex justify-between items-center mb-2">
-          <h3 class="font-bold text-slate-800 text-sm">홍예진 님 정산 승인 대기</h3>
-          <span class="text-xs bg-blue-100 text-blue-600 font-bold px-2 py-1 rounded">1.5배 가중치</span>
+      <div class="card border-l-4 border-blue-500">
+        <div class="flex justify-between items-start mb-3">
+          <div>
+            <h3 class="font-black text-slate-800 text-sm mb-1">참여자 윤정환 정산 대기</h3>
+            <p class="text-xs font-bold text-slate-500">통학로 안전 도우미 (오전 8시~9시)</p>
+          </div>
+          <span class="bg-yellow-100 text-yellow-700 text-[10px] font-black px-2 py-1 rounded">가중치 1.5배</span>
         </div>
-        <p class="text-xs text-slate-500 mb-4">과업: 통학로 안전 도우미 (오전 8시~9시)</p>
-        <button class="btn bg-slate-900 text-white text-sm py-3" onclick="showModal('settle-modal')">지역화폐 차등 정산 실행</button>
+        <div class="bg-slate-50 p-3 rounded-lg text-xs font-bold text-slate-600 mb-4 space-y-1">
+          <div class="flex justify-between"><span>기본 수당</span><span>10,000 P</span></div>
+          <div class="flex justify-between text-blue-600"><span>가중치 적용 (+50%)</span><span>+5,000 P</span></div>
+          <div class="flex justify-between text-emerald-600"><span>가로등 고장 제보 보너스</span><span>+2,000 P</span></div>
+          <div class="flex justify-between border-t border-slate-200 mt-2 pt-2 text-slate-800 text-sm font-black"><span>최종 지급액</span><span>17,000 P</span></div>
+        </div>
+        <button class="btn bg-slate-900 text-white" onclick="showModal('settle')">지역화폐 자동 지급 명령 (API 연동)[cite: 1]</button>
       </div>
 
-      <div class="card border-l-4 border-l-red-500 bg-red-50">
-        <h3 class="font-bold text-red-800 text-sm mb-2">개인정보 생애주기 영구 파기[cite: 1]</h3>
-        <p class="text-xs text-red-600 mb-4">정산 완료 건에 대한 메타데이터 3단계 삭제</p>
-        <button class="btn bg-red-600 text-white text-sm py-3" onclick="executePurge()">DB 영구 삭제 (Purge) 실행</button>
+      <div class="card border-l-4 border-red-500 bg-red-50 relative overflow-hidden">
+        <span class="material-symbols-outlined absolute -right-2 -top-2 text-red-100" style="font-size:100px">delete_forever</span>
+        <h3 class="font-black text-red-800 text-sm mb-2 relative z-10">개인정보 3단계 영구 파기[cite: 1]</h3>
+        <p class="text-xs font-bold text-red-600 mb-5 relative z-10">정산 완료 데이터 사후 유출 차단 조치</p>
+        <button class="btn bg-red-600 text-white shadow-[0_4px_12px_rgba(220,38,38,0.3)] relative z-10" onclick="startPurge()">DB 자동삭제 모듈(Purge) 가동</button>
+        
+        <!-- Purge Animation Box -->
+        <div id="purge-box" class="hidden mt-4 space-y-3 relative z-10">
+          <div>
+            <div class="flex justify-between text-[10px] font-black text-red-800 mb-1"><span>1. 스냅샷 좌표 파기</span><span id="p-s1">대기</span></div>
+            <div class="h-1.5 bg-red-200 rounded-full"><div id="p-b1" class="h-full bg-red-600 rounded-full w-0 transition-all duration-500"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-[10px] font-black text-red-800 mb-1"><span>2. 보조 서명 이미지 파기</span><span id="p-s2">대기</span></div>
+            <div class="h-1.5 bg-red-200 rounded-full"><div id="p-b2" class="h-full bg-red-600 rounded-full w-0 transition-all duration-500"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-[10px] font-black text-red-800 mb-1"><span>3. 인증 메타데이터 파기</span><span id="p-s3">대기</span></div>
+            <div class="h-1.5 bg-red-200 rounded-full"><div id="p-b3" class="h-full bg-red-600 rounded-full w-0 transition-all duration-500"></div></div>
+          </div>
+        </div>
       </div>
     </div>
 
   </div>
 
   <!-- 하단 네비게이션 -->
-  <div class="bottom-nav" id="bottom-nav">
-    <!-- 동적 렌더링 -->
-  </div>
+  <div class="bottom-nav" id="bottom-nav"></div>
 </div>
 
-<!-- ==================== 모달 창 모음 ==================== -->
+<!-- ==================== 다목적 모달 엔진 ==================== -->
 <div id="modal-container" class="modal-overlay">
-  <div class="modal-content" id="modal-box">
-    <!-- 동적 모달 내용 삽입 -->
-  </div>
+  <div class="modal-content" id="modal-box"></div>
 </div>
 
 <script>
+  /* Global State */
   let currentRole = null;
   let isOffline = false;
-  let tick = 0;
-  let hashStr = "H_0";
-  let activeTab = 'home';
+  let monotonicTick = 0;
+  let prevHash = "H_0";
+  let offlineQueue = [];
   
-  // 캔버스 관련
-  let canvas, ctx, isDrawing = false;
+  /* Timers */
+  let systemTimer, pTimer, qrTimer;
+  let pSec = 0;
+  let qrSec = 30;
 
-  setInterval(() => { tick++; }, 1000);
+  // Init
+  systemTimer = setInterval(() => {
+    monotonicTick++;
+    const d = new Date();
+    $('sim-clock').innerText = d.getHours().toString().padStart(2,'0') + ":" + 
+                               d.getMinutes().toString().padStart(2,'0') + ":" + 
+                               d.getSeconds().toString().padStart(2,'0');
+  }, 1000);
 
   function $(id) { return document.getElementById(id); }
 
+  /* Navigation & Login */
   function login(role) {
     currentRole = role;
     $('view-login').classList.add('hidden');
-    $('role-badge').innerText = role === 'participant' ? '일반참여자' : role === 'leader' ? '현장리더' : '관리자';
     
     if(role === 'participant') {
-      $('header-title').innerText = '안심워크 (홍예진)';
+      $('header-title').innerText = '안심워크';
+      $('header-sub').innerText = '윤정환 (참여자) | 광주광역시 서구';
+      $('role-badge').innerText = '참여자';
       navTo('view-p-home');
       renderNav([
         { id: 'view-p-home', icon: 'home', text: '홈' },
-        { id: 'view-p-auth', icon: 'qr_code_scanner', text: '현장인증' }
+        { id: 'view-p-auth', icon: 'qr_code_scanner', text: '인증' }
       ]);
-      setInterval(updatePTimer, 1000);
-    } else if(role === 'leader') {
-      $('header-title').innerText = '현장관리 (김안심)';
+      pTimer = setInterval(updatePTimer, 1000);
+    } 
+    else if(role === 'leader') {
+      $('header-title').innerText = '현장관리';
+      $('header-sub').innerText = '김안심 (리더) | 광주광역시 서구 2조';
+      $('role-badge').innerText = '현장리더';
       navTo('view-l-home');
       renderNav([
-        { id: 'view-l-home', icon: 'radar', text: '관제현황' },
-        { id: 'view-l-qr', icon: 'qr_code', text: 'QR표출' },
-        { id: 'view-l-sign', icon: 'draw', text: '서명대행' }
+        { id: 'view-l-home', icon: 'radar', text: '그룹관제' },
+        { id: 'view-l-qr', icon: 'qr_code_2', text: 'QR발급' },
+        { id: 'view-l-sign', icon: 'draw', text: '대행서명' }
       ]);
       initLeaderQR();
-      setTimeout(initCanvas, 100);
-    } else {
-      $('header-title').innerText = '지자체 행정망';
+      setTimeout(initCanvas, 300);
+    } 
+    else {
+      $('header-title').innerText = '통합정산';
+      $('header-sub').innerText = '광주광역시청 관리자 시스템';
+      $('role-badge').innerText = 'Admin';
       navTo('view-a-home');
       renderNav([{ id: 'view-a-home', icon: 'admin_panel_settings', text: '관제센터' }]);
     }
   }
 
   function renderNav(items) {
-    const nav = $('bottom-nav');
-    nav.innerHTML = items.map(item => `
-      <div class="nav-item ${activeTab === item.id ? 'active' : ''}" onclick="navTo('${item.id}', this)">
-        <span class="material-symbols-outlined text-2xl">${item.icon}</span>
+    $('bottom-nav').innerHTML = items.map(item => `
+      <div class="nav-item" id="nav-${item.id}" onclick="navTo('${item.id}')">
+        <span class="material-symbols-outlined text-[26px]">${item.icon}</span>
         <span>${item.text}</span>
       </div>
     `).join('');
+    navTo(items[0].id); // default activate first
   }
 
-  function navTo(viewId, el = null) {
+  function navTo(viewId) {
     document.querySelectorAll('.content > div').forEach(d => d.classList.add('hidden'));
     $(viewId).classList.remove('hidden');
-    activeTab = viewId;
-    if(el) {
-      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      el.classList.add('active');
-    }
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    if($(`nav-${viewId}`)) $(`nav-${viewId}`).classList.add('active');
   }
 
-  /* 참여자 기능 */
-  let pSec = 0;
+  /* 탭 스위칭 (참여자 인증 뷰) */
+  function switchTab(num) {
+    const btns = $('auth-tabs').children;
+    for(let i=0; i<3; i++) {
+      btns[i].className = "flex-1 py-2 text-xs font-black rounded-lg transition text-slate-500 hover:bg-slate-300";
+      $(`tab-${i+1}`).classList.add('hidden');
+    }
+    btns[num-1].className = "flex-1 py-2 text-xs font-black rounded-lg transition bg-white text-blue-600 shadow-sm";
+    $(`tab-${num}`).classList.remove('hidden');
+  }
+
+  /* 참여자 기능: 오프라인 큐 & 해시 로직[cite: 1] */
   function updatePTimer() {
     pSec++;
     const h = String(Math.floor(pSec/3600)).padStart(2,'0');
@@ -351,42 +454,49 @@
     if($('p-timer')) $('p-timer').innerText = `${h}:${m}:${s}`;
   }
 
-  function switchAuthTab(num) {
-    const btns = $('auth-tabs').children;
-    for(let i=0; i<btns.length; i++) {
-      btns[i].className = "px-4 py-2 bg-slate-100 text-slate-600 text-xs font-bold rounded-full whitespace-nowrap";
+  function processEvent(eventName, successTitle, successDesc) {
+    if(isOffline) {
+      // 오프라인: 단조시계 결합 해시 체이닝
+      const currentHash = `SHA(${prevHash}|${eventName}|T_${monotonicTick})`;
+      offlineQueue.push({ tick: monotonicTick, event: eventName, hash: currentHash });
+      
+      const logHtml = `<div class="hash-line"><span class="text-slate-400">Tick_${monotonicTick}:</span> ${currentHash} <span class="text-[9px] bg-slate-800 text-emerald-300 px-1 rounded">적재완료</span></div>`;
+      if($('hash-log')) $('hash-log').insertAdjacentHTML('afterbegin', logHtml);
+      if($('p-queue-cnt')) $('p-queue-cnt').innerText = offlineQueue.length;
+      
+      prevHash = currentHash;
+      showToast("오프라인 큐 저장", "통신망 단절로 해시 체이닝 후 임시 보관됩니다.", "wifi_off", "text-slate-500");
+    } else {
+      // 온라인: 즉시 승인
+      buildModal(successTitle, successDesc, "verified", "text-blue-500");
     }
-    btns[num-1].className = "px-4 py-2 bg-blue-600 text-white text-xs font-bold rounded-full whitespace-nowrap";
-    
-    $('auth-tab-1').classList.add('hidden');
-    $('auth-tab-2').classList.add('hidden');
-    $('auth-tab-3').classList.add('hidden');
-    $(`auth-tab-${num}`).classList.remove('hidden');
+  }
+
+  function simulateAuth(type, title, desc) {
+    processEvent(type, title, desc);
   }
 
   function verifyPIN() {
     const pin = $('pin-input').value;
     if(!pin) return alert("PIN을 입력하세요");
-    closeModal();
-    setTimeout(() => {
-      buildModal('인증 완료', 'Cell-ID 기지국 대사 및 동적 PIN 일치가 확인되었습니다.[cite: 1]', 'verified', 'text-blue-500');
-    }, 500);
+    processEvent('PIN_VERIFY', 'B-1 경로 인증 완료', '기지국(Cell-ID) 대사 및 암호 검증이 완료되었습니다.[cite: 1]');
   }
 
-  /* 리더 기능 */
+  /* 리더 기능: QR, 캔버스, 레이더 */
   function initLeaderQR() {
-    let w = 100;
-    setInterval(() => {
-      w -= (100/30);
-      if(w <= 0) {
-        w = 100;
+    qrTimer = setInterval(() => {
+      qrSec--;
+      if(qrSec <= 0) {
+        qrSec = 30;
         $('dynamic-pin').innerText = Math.floor(Math.random()*90 + 10);
+        $('dynamic-qr-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=Ansim_Token_${monotonicTick}`;
       }
-      if($('qr-progress')) $('qr-progress').style.width = `${w}%`;
+      if($('qr-sec')) $('qr-sec').innerText = `${qrSec}초`;
+      if($('qr-bar')) $('qr-bar').style.width = `${(qrSec/30)*100}%`;
     }, 1000);
   }
 
-  /* 캔버스 기능 (B-3 경로)[cite: 1] */
+  let canvas, ctx, isDrawing = false;
   function initCanvas() {
     canvas = $('sign-pad');
     if(!canvas) return;
@@ -394,103 +504,58 @@
     canvas.width = canvas.offsetWidth;
     canvas.height = canvas.offsetHeight;
     
-    canvas.addEventListener('mousedown', startPos);
-    canvas.addEventListener('mouseup', endPos);
-    canvas.addEventListener('mousemove', draw);
-    canvas.addEventListener('touchstart', (e)=>{ e.preventDefault(); startPos(e.touches[0]); });
-    canvas.addEventListener('touchend', endPos);
-    canvas.addEventListener('touchmove', (e)=>{ e.preventDefault(); draw(e.touches[0]); });
-  }
+    const start = (e) => { isDrawing = true; draw(e); };
+    const end = () => { isDrawing = false; ctx.beginPath(); };
+    const draw = (e) => {
+      if(!isDrawing) return;
+      const rect = canvas.getBoundingClientRect();
+      const x = (e.clientX || e.touches?.[0].clientX) - rect.left;
+      const y = (e.clientY || e.touches?.[0].clientY) - rect.top;
+      ctx.lineWidth = 4;
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = '#6b21a8'; // purple-800
+      ctx.lineTo(x, y);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+    };
 
-  function startPos(e) {
-    isDrawing = true;
-    draw(e);
-  }
-  function endPos() {
-    isDrawing = false;
-    ctx.beginPath();
-  }
-  function draw(e) {
-    if(!isDrawing) return;
-    const rect = canvas.getBoundingClientRect();
-    const x = (e.clientX || e.pageX) - rect.left;
-    const y = (e.clientY || e.pageY) - rect.top;
-    ctx.lineWidth = 3;
-    ctx.lineCap = 'round';
-    ctx.strokeStyle = '#0f172a';
-    ctx.lineTo(x, y);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(x, y);
+    canvas.addEventListener('mousedown', start);
+    canvas.addEventListener('mouseup', end);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('touchstart', (e)=>{ e.preventDefault(); start(e); });
+    canvas.addEventListener('touchend', end);
+    canvas.addEventListener('touchmove', (e)=>{ e.preventDefault(); draw(e); });
   }
 
   function submitSign() {
-    if(!canvas) return;
-    buildModal('대행 전송 완료', '단말기 미소지자의 수기 서명 패킷(FLAG_B3)이 전송되었습니다.[cite: 1]', 'send', 'text-purple-500');
+    buildModal('서명 대행(B-3) 완료', '단말기 미소지자의 수기 서명 이미지와 대행 플래그가 전송되었습니다.[cite: 1]', 'send', 'text-purple-600');
     ctx.clearRect(0,0,canvas.width,canvas.height);
   }
 
-  /* 시뮬레이터 글로벌 제어 */
+  /* 글로벌 관제 시뮬레이터 로직 */
   function toggleOffline() {
     isOffline = !isOffline;
-    $('sim-offline').classList.toggle('active', isOffline);
-    if(isOffline) {
-      alert("통신 음영지역에 진입했습니다. 데이터가 오프라인 임시 큐에 해시 체이닝되어 저장됩니다.[cite: 1]");
-    } else {
-      alert("네트워크 복구! 단조시계(Monotonic Clock) 검증 후 서버로 일괄 동기화(Batch Upload) 되었습니다.[cite: 1]");
-      hashStr = "H_" + tick; // Reset base after upload
-    }
-  }
-
-  function addHashLog(dataStr) {
-    if(isOffline) {
-      const prevHash = hashStr;
-      hashStr = `Hash(${prevHash} + ${dataStr} + Tick_${tick})`;
-      $('hash-chain-log').innerHTML = `<div class="mb-1 text-emerald-400">Tick_${tick}: ${hashStr}</div>` + $('hash-chain-log').innerHTML;
+    $('btn-offline').classList.toggle('active-red', isOffline);
+    
+    if(!isOffline && offlineQueue.length > 0) {
+      // 온라인 복귀 시 일괄 동기화 (Batch Upload)[cite: 1]
+      buildModal('통신망 재연결 동기화', `${offlineQueue.length}개의 해시 체인 패킷이 단조시계 무결성 검증을 거쳐 소급 승인되었습니다.[cite: 1]`, 'cloud_sync', 'text-emerald-500');
+      offlineQueue = [];
+      if($('p-queue-cnt')) $('p-queue-cnt').innerText = 0;
     }
   }
 
   function triggerPush() {
-    if(currentRole !== 'participant') return alert("참여자 계정으로 로그인 후 시도하세요.");
-    buildPushModal();
-  }
-
-  function triggerAnomaly() {
-    if(currentRole === 'participant') {
-      buildModal('시공간 이상치 탐지 🚨', '이전 인증 시점 대비 물리적 이동속도 임계치(v_th)를 초과하여 대리 응답으로 간주, 승인이 거부되었습니다.[cite: 1]', 'warning', 'text-red-500');
-    } else if(currentRole === 'leader') {
-      $('radar-anomaly').classList.remove('hidden');
-      $('radar-status').innerText = '이탈발생 (집중관제)';
-      $('radar-status').className = 'text-red-600 bg-red-100 px-2 py-1 rounded';
-      alert("적응형 그룹 분석부: 조원 1명의 거리가 30m 임계 반경을 이탈했습니다. 푸시 발송 주기를 단축합니다.[cite: 1]");
-    }
-  }
-
-  function executePurge() {
-    buildModal('데이터 영구 파기', '정산 완료! 위치 스냅샷, 서명 이미지, 인증 메타데이터가 3단계에 걸쳐 영구 삭제(Purge) 되었습니다.[cite: 1]', 'delete_forever', 'text-red-600');
-  }
-
-  /* 모달 엔진 */
-  function showModal(type) {
-    if(type === 'qr-success') {
-      addHashLog("QR_Scan");
-      buildModal('현장 증명 완료', '위치정보 수집 없이 시변 토큰 일치(제1모드)로 동시 재실이 증명되었습니다.[cite: 1]', 'verified', 'text-emerald-500');
-    } else if (type === 'ars-call') {
-      addHashLog("ARS_Dial");
-      buildModal('가상 통화 연결중...', '발신자 번호(CID)와 기지국 위치를 대사하여 인증을 완료합니다.[cite: 1]', 'record_voice_over', 'text-emerald-500');
-    } else if (type === 'settle-modal') {
-      buildModal('정산 및 지역화폐 지급', '초등학교 통학로 시간대 1.5배 가중치가 적용되어 15,000 P가 지역화폐로 즉시 발급되었습니다.[cite: 1]', 'payments', 'text-blue-600');
-    }
-  }
-
-  function buildPushModal() {
+    if(currentRole !== 'participant') return showToast("오류", "참여자(윤정환) 뷰에서만 작동합니다.", "error", "text-red-500");
+    
     const html = `
       <div class="text-center">
-        <span class="material-symbols-outlined text-4xl text-blue-500 mb-2">notifications_active</span>
-        <h3 class="font-bold text-lg mb-2">비정형 위치 확인 요청</h3>
-        <p class="text-xs text-slate-500 mb-4 font-bold">5분 내 응답 필수 (단일 시점 휘발성 스냅샷 제2모드)[cite: 1]</p>
-        <p class="text-sm font-bold text-slate-800 bg-slate-50 p-3 rounded-lg mb-4">현재 지정된 현장에 계십니까?<br>1회성 위치정보를 제출하고 즉시 파기합니다.</p>
-        <button class="btn btn-primary w-full" onclick="acceptPush()">동의 및 전송 (Consent Flag)</button>
+        <span class="material-symbols-outlined text-5xl text-blue-500 mb-3 animate-bounce">notifications_active</span>
+        <h3 class="font-black text-xl mb-1 text-slate-800">1회성 위치 스냅샷 요청</h3>
+        <p class="text-[10px] text-slate-500 font-bold mb-4 bg-slate-100 py-1 rounded">제2모드: 무작위 발생 이벤트[cite: 1]</p>
+        <p class="text-sm font-black text-slate-700 bg-blue-50 p-4 rounded-xl border border-blue-100 mb-5">현재 지정된 현장에 계십니까?<br><span class="text-blue-600 mt-1 block">위치정보는 단 1회 전송 후 파기됩니다.</span></p>
+        <button class="btn btn-primary w-full shadow-lg" onclick="acceptPush()">명시적 동의 및 제출 (Consent Flag)</button>
       </div>
     `;
     $('modal-box').innerHTML = html;
@@ -498,20 +563,66 @@
   }
 
   function acceptPush() {
-    addHashLog("Push_Agree");
     closeModal();
+    processEvent('PUSH_SNAPSHOT', '스냅샷 파기 완료', '단일 시점 휘발성 위치 좌표가 추출 및 승인된 직후 메모리에서 완전 삭제되었습니다.[cite: 1]');
+  }
+
+  function triggerAnomaly() {
+    if(currentRole !== 'participant') return showToast("오류", "참여자(윤정환) 뷰에서만 작동합니다.", "error", "text-red-500");
+    buildModal('시공간 이동 이상치 탐지 🚨', '물리적으로 불가능한 이동 속도(v = dx/dt > v_th)가 감지되어 대리 출석 어뷰징으로 차단되었습니다.[cite: 1]', 'gavel', 'text-red-600');
+  }
+
+  function triggerGroupDeviation() {
+    if(currentRole !== 'leader') return showToast("오류", "리더(김안심) 관제 화면에서만 작동합니다.", "error", "text-red-500");
+    
+    const dot = $('target-dot');
+    dot.style.top = '10%';
+    dot.style.left = '85%';
+    dot.classList.add('dot-red');
+    
+    $('radar-msg').innerText = "이탈 감지 (집중 추적 모드 전환)[cite: 1]";
+    $('radar-msg').className = "text-sm font-black text-red-600";
+    $('radar-icon').innerText = "warning";
+    $('radar-icon').className = "material-symbols-outlined text-red-500 text-3xl animate-pulse";
+    
+    showToast("그룹 간격 분석부", "윤정환 님이 30m 임계 반경을 이탈했습니다. 해당 인원의 푸시 주기를 단축합니다.[cite: 1]", "radar", "text-red-500");
+  }
+
+  /* 관리자 Purge 로직[cite: 1] */
+  function startPurge() {
+    $('purge-box').classList.remove('hidden');
+    
+    const step = (id, statusId, time) => {
+      setTimeout(() => {
+        $(id).style.width = '100%';
+        $(statusId).innerText = "파기완료";
+        $(statusId).className = "text-red-600 font-black";
+      }, time);
+    };
+
+    step('p-b1', 'p-s1', 500);
+    step('p-b2', 'p-s2', 1500);
+    step('p-b3', 'p-s3', 2500);
+
     setTimeout(() => {
-      buildModal('스냅샷 파기 완료', '1회성 위치 좌표 추출 완료 후 시스템 메모리에서 즉시 파기(Purge) 되었습니다.[cite: 1]', 'security', 'text-blue-500');
-    }, 400);
+      buildModal('영구 파기 완료', '개인정보보호법에 의거, 정산이 완료된 모든 위치 메타데이터가 DB에서 영구 삭제(Purge) 되었습니다.[cite: 1]', 'delete_sweep', 'text-red-600');
+    }, 3200);
+  }
+
+  /* UI 헬퍼 */
+  function showModal(type) {
+    if(type === 'settle') {
+      buildModal('지역화폐 차등 정산[cite: 1]', '조례 기준 1.5배 가중치 및 야간/제보 보너스가 적용되어 17,000 P가 광주상생카드 계좌로 지급되었습니다.', 'payments', 'text-blue-600');
+    }
   }
 
   function buildModal(title, desc, icon, iconColorClass) {
     const html = `
       <div class="text-center">
-        <span class="material-symbols-outlined text-5xl mb-4 ${iconColorClass}">${icon}</span>
-        <h3 class="font-bold text-xl mb-2 text-slate-800">${title}</h3>
-        <p class="text-sm font-bold text-slate-500 mb-6 leading-relaxed">${desc}</p>
-        <button class="btn bg-slate-900 text-white w-full" onclick="closeModal()">확인</button>
+        <span class="material-symbols-outlined text-6xl mb-4 ${iconColorClass}">${icon}</span>
+        <h3 class="font-black text-xl mb-3 text-slate-800">${title}</h3>
+        <p class="text-sm font-bold text-slate-500 mb-8 leading-relaxed break-keep">${desc}</p>
+        <button class="btn bg-slate-900 text-white w-full" onclick="closeModal()">확인 완료</button>
       </div>
     `;
     $('modal-box').innerHTML = html;
@@ -521,7 +632,12 @@
   function closeModal() {
     $('modal-container').classList.remove('show');
   }
-</script>
 
+  function showToast(title, desc, icon, iconColor) {
+    // 간이 토스트 (모달 대신 상단 알림)
+    buildModal(title, desc, icon, iconColor);
+  }
+
+</script>
 </body>
 </html>
