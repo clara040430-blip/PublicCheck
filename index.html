@@ -120,7 +120,7 @@
         <button class="card flex items-center gap-4 hover:border-blue-500 border-2 border-transparent transition p-5" onclick="login('participant')">
           <div class="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600 font-black text-lg">P</div>
           <div class="text-left">
-            <div class="font-black text-slate-800 text-lg">일반 참여자 (윤정환 님)</div>
+            <div class="font-black text-slate-800 text-lg">일반 참여자 (김안심 님)</div>
             <div class="text-xs text-slate-500 font-bold mt-1">제1모드 QR / 제2모드 스냅샷 / 다변화 인증</div>
           </div>
         </button>
@@ -128,7 +128,7 @@
         <button class="card flex items-center gap-4 hover:border-emerald-500 border-2 border-transparent transition p-5" onclick="login('leader')">
           <div class="w-14 h-14 bg-emerald-100 rounded-2xl flex items-center justify-center text-emerald-600 font-black text-lg">L</div>
           <div class="text-left">
-            <div class="font-black text-slate-800 text-lg">현장 리더 (김안심 님)</div>
+            <div class="font-black text-slate-800 text-lg">현장 리더 (윤정환 님)</div>
             <div class="text-xs text-slate-500 font-bold mt-1">30초 동적 토큰 / 그룹 적응형 분석 / 대행 서명</div>
           </div>
         </button>
@@ -143,7 +143,7 @@
       </div>
     </div>
 
-    <!-- ==================== 윤정환 (참여자) 뷰 ==================== -->
+    <!-- ==================== 김안심 (참여자) 뷰 ==================== -->
     <div id="view-p-home" class="hidden">
       <div class="card-gradient card relative overflow-hidden mb-5">
         <span class="material-symbols-outlined absolute -right-4 -top-4 opacity-20 text-[120px]">policy</span>
@@ -223,7 +223,7 @@
       </div>
     </div>
 
-    <!-- ==================== 김안심 (현장 리더) 뷰 ==================== -->
+    <!-- ==================== 윤정환 (현장 리더) 뷰 ==================== -->
     <div id="view-l-home" class="hidden">
       <h2 class="text-xl font-black text-slate-800 mb-1">적응형 그룹 간격 분석부</h2>
       <p class="text-xs font-bold text-slate-500 mb-4">5인 1조 상호 거리에 따른 푸시 주기 자동 제어</p>
@@ -239,7 +239,7 @@
           <div class="dot" style="top: 55%; left: 55%;"></div>
           <div class="dot" style="top: 35%; left: 52%;"></div>
           <div class="dot" style="top: 60%; left: 40%;"></div>
-          <!-- 이탈 대상 조원 (윤정환 님) -->
+          <!-- 이탈 대상 조원 (김안심 님) -->
           <div class="dot" id="target-dot" style="top: 40%; left: 40%;"></div>
         </div>
         <div class="bg-slate-50 p-4 border-t border-slate-100 flex justify-between items-center">
@@ -327,7 +327,7 @@
       <div class="card border-l-4 border-blue-500">
         <div class="flex justify-between items-start mb-3">
           <div>
-            <h3 class="font-black text-slate-800 text-sm mb-1">참여자 윤정환 정산 대기</h3>
+            <h3 class="font-black text-slate-800 text-sm mb-1">참여자 김안심 정산 대기</h3>
             <p class="text-xs font-bold text-slate-500">통학로 안전 도우미 (오전 8시~9시)</p>
           </div>
           <span class="bg-yellow-100 text-yellow-700 text-[10px] font-black px-2 py-1 rounded">가중치 1.5배</span>
@@ -437,7 +437,7 @@
     
     if(role === 'participant') {
       $('header-title').innerText = '안심워크';
-      $('header-sub').innerText = '윤정환 (참여자) | 광주광역시 서구';
+      $('header-sub').innerText = '김안심 (참여자) | 광주광역시 서구';
       $('role-badge').innerText = '참여자';
       navTo('view-p-home');
       renderNav([
@@ -448,7 +448,7 @@
     } 
     else if(role === 'leader') {
       $('header-title').innerText = '현장관리';
-      $('header-sub').innerText = '김안심 (리더) | 광주광역시 서구 2조';
+      $('header-sub').innerText = '윤정환 (리더) | 광주광역시 서구 2조';
       $('role-badge').innerText = '현장리더';
       navTo('view-l-home');
       renderNav([
@@ -638,7 +638,7 @@
   }
 
   function triggerPush() {
-    if(currentRole !== 'participant') return showToast("오류", "참여자(윤정환) 뷰에서만 작동합니다.", "error", "text-red-500");
+    if(currentRole !== 'participant') return showToast("오류", "참여자(김안심) 뷰에서만 작동합니다.", "error", "text-red-500");
     
     const html = `
       <div class="text-center">
@@ -659,12 +659,12 @@
   }
 
   function triggerAnomaly() {
-    if(currentRole !== 'participant') return showToast("오류", "참여자(윤정환) 뷰에서만 작동합니다.", "error", "text-red-500");
+    if(currentRole !== 'participant') return showToast("오류", "참여자(김안심) 뷰에서만 작동합니다.", "error", "text-red-500");
     buildModal('시공간 이동 이상치 탐지 🚨', '물리적으로 불가능한 이동 속도(v = dx/dt > v_th)가 감지되어 대리 출석 어뷰징으로 차단되었습니다.', 'gavel', 'text-red-600');
   }
 
   function triggerGroupDeviation() {
-    if(currentRole !== 'leader') return showToast("오류", "리더(김안심) 관제 화면에서만 작동합니다.", "error", "text-red-500");
+    if(currentRole !== 'leader') return showToast("오류", "리더(윤정환) 관제 화면에서만 작동합니다.", "error", "text-red-500");
     
     const dot = $('target-dot');
     dot.style.top = '10%';
@@ -676,7 +676,7 @@
     $('radar-icon').innerText = "warning";
     $('radar-icon').className = "material-symbols-outlined text-red-500 text-3xl animate-pulse";
     
-    showToast("그룹 간격 분석부", "윤정환 님이 30m 임계 반경을 이탈했습니다. 해당 인원의 푸시 주기를 단축합니다.", "radar", "text-red-500");
+    showToast("그룹 간격 분석부", "김안심 님이 30m 임계 반경을 이탈했습니다. 해당 인원의 푸시 주기를 단축합니다.", "radar", "text-red-500");
   }
 
   /* 관리자 Purge 로직 */
