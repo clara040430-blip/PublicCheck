@@ -11,6 +11,10 @@
   body { margin: 0; background: #cbd5e1; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
   .app-container { width: 100%; max-width: 430px; height: 100dvh; background: var(--bg); position: relative; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); display: flex; flex-direction: column; }
   
+  /* Splash Screen */
+  #splash-screen { position: absolute; inset: 0; z-index: 9999; background: #0b1220; display: flex; justify-content: center; align-items: center; transition: opacity 0.5s ease; }
+  #splash-screen img { width: 100%; height: 100%; object-fit: cover; }
+
   /* Top Simulator Control Bar (Global Event Trigger) */
   .sim-bar { background: #0f172a; color: white; padding: 12px; font-size: 11px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: space-between; align-items: center; z-index: 50; border-bottom: 2px solid #334155; }
   .sim-title { font-weight: 900; color: #38bdf8; width: 100%; margin-bottom: 4px; display: flex; justify-content: space-between; }
@@ -65,6 +69,12 @@
 <body>
 
 <div class="app-container">
+
+  <!-- 3초 대기 인트로 스플래시 화면 -->
+  <div id="splash-screen">
+    <img src="intro.jpg" alt="안심워크 인트로 이미지">
+  </div>
+
   <!-- 시뮬레이터 글로벌 이벤트 바 -->
   <div class="sim-bar">
     <div class="sim-title"><span>⚙️ 시스템 이벤트 관제</span> <span id="sim-clock" class="text-slate-400">00:00:00</span></div>
@@ -117,7 +127,7 @@
           <div class="w-14 h-14 bg-purple-100 rounded-2xl flex items-center justify-center text-purple-600 font-black text-lg">A</div>
           <div class="text-left">
             <div class="font-black text-slate-800 text-lg">지자체 행정 관리자</div>
-            <div class="text-xs text-slate-500 font-bold mt-1">가중치 차등 정산 / 개인정보 영구 파기(Purge)[cite: 1]</div>
+            <div class="text-xs text-slate-500 font-bold mt-1">가중치 차등 정산 / 개인정보 영구 파기(Purge)</div>
           </div>
         </button>
       </div>
@@ -129,7 +139,7 @@
         <span class="material-symbols-outlined absolute -right-4 -top-4 opacity-20 text-[120px]">policy</span>
         <div class="flex justify-between items-start mb-2">
           <span class="bg-blue-900 bg-opacity-50 text-blue-200 text-[10px] font-black px-2 py-1 rounded">제1모드 진행중</span>
-          <span class="text-yellow-300 text-[10px] font-black border border-yellow-300 px-2 py-1 rounded">1.5배 가중치[cite: 1]</span>
+          <span class="text-yellow-300 text-[10px] font-black border border-yellow-300 px-2 py-1 rounded">1.5배 가중치</span>
         </div>
         <h2 class="text-2xl font-black mb-1">통학로 안전 도우미</h2>
         <p class="text-blue-200 text-xs font-bold mb-5">광주광역시 서구 2조 현장</p>
@@ -140,7 +150,7 @@
         </div>
       </div>
       
-      <h3 class="font-black text-slate-800 mb-3 text-sm flex items-center gap-1"><span class="material-symbols-outlined text-base">memory</span> 오프라인 단조 시계 & 해시 블록[cite: 1]</h3>
+      <h3 class="font-black text-slate-800 mb-3 text-sm flex items-center gap-1"><span class="material-symbols-outlined text-base">memory</span> 오프라인 단조 시계 & 해시 블록</h3>
       <div class="card p-0 overflow-hidden mb-6 border-2 border-slate-800">
         <div class="bg-slate-800 text-slate-400 text-[10px] p-2 flex justify-between font-bold">
           <span>Tick(단조시계)</span><span>FIFO Queue (Hash Chaining)</span>
@@ -154,19 +164,19 @@
         <div class="card p-4 text-center bg-emerald-50 border-emerald-100">
           <span class="material-symbols-outlined text-emerald-500 text-3xl mb-1">location_off</span>
           <p class="text-[10px] font-black text-emerald-700">GPS 상시 수집</p>
-          <p class="text-xl font-black text-emerald-600 mt-1">0% (차단)[cite: 1]</p>
+          <p class="text-xl font-black text-emerald-600 mt-1">0% (차단)</p>
         </div>
         <div class="card p-4 text-center bg-blue-50 border-blue-100">
           <span class="material-symbols-outlined text-blue-500 text-3xl mb-1">delete_sweep</span>
           <p class="text-[10px] font-black text-blue-700">스냅샷 즉시파기</p>
-          <p class="text-xl font-black text-blue-600 mt-1">4건[cite: 1]</p>
+          <p class="text-xl font-black text-blue-600 mt-1">4건</p>
         </div>
       </div>
     </div>
 
     <div id="view-p-auth" class="hidden">
       <h2 class="text-xl font-black text-slate-800 mb-1">현장 검증 유입 경로 다변화</h2>
-      <p class="text-xs font-bold text-slate-500 mb-5">상황에 맞는 경로(A, B-1, B-2)를 선택하세요.[cite: 1]</p>
+      <p class="text-xs font-bold text-slate-500 mb-5">상황에 맞는 경로(A, B-1, B-2)를 선택하세요.</p>
       
       <div class="flex gap-2 mb-5 bg-slate-200 p-1 rounded-xl" id="auth-tabs">
         <button class="flex-1 py-2 text-xs font-black rounded-lg transition bg-white text-blue-600 shadow-sm" onclick="switchTab(1)">A. 동적 QR</button>
@@ -181,14 +191,14 @@
           <span class="material-symbols-outlined text-slate-700" style="font-size:120px">qr_code_2</span>
           <div class="scanner-line"></div>
         </div>
-        <button class="btn btn-primary" onclick="simulateAuth('QR_SCAN', '제1 유입 경로(A) 승인', '동적 식별코드 토큰이 일치하여 위치좌표 수집 없이 동시 재실이 증명되었습니다.[cite: 1]')">현장 리더 QR 스캔하기</button>
+        <button class="btn btn-primary" onclick="simulateAuth('QR_SCAN', '제1 유입 경로(A) 승인', '동적 식별코드 토큰이 일치하여 위치좌표 수집 없이 동시 재실이 증명되었습니다.')">현장 리더 QR 스캔하기</button>
       </div>
 
       <!-- 리더 PIN & 기지국 대사 -->
       <div id="tab-2" class="card hidden text-center py-6">
         <span class="material-symbols-outlined text-4xl text-slate-800 mb-2">password</span>
         <h3 class="font-black text-slate-800 mb-2">리더 발급 암호 검증</h3>
-        <p class="text-xs text-slate-500 font-bold mb-6">리더가 구두 공유한 30초 동적 PIN과<br>통신망 기지국(Cell-ID)을 대사합니다.[cite: 1]</p>
+        <p class="text-xs text-slate-500 font-bold mb-6">리더가 구두 공유한 30초 동적 PIN과<br>통신망 기지국(Cell-ID)을 대사합니다.</p>
         
         <input type="number" id="pin-input" placeholder="암호 2자리" class="w-full bg-slate-100 p-4 rounded-xl text-center text-3xl font-black mb-4 border-2 border-slate-200 focus:border-blue-500 outline-none">
         <button class="btn bg-slate-800 text-white" onclick="verifyPIN()">Cell-ID 대사 및 인증</button>
@@ -198,14 +208,14 @@
       <div id="tab-3" class="card hidden text-center py-6 bg-slate-800 text-white">
         <span class="material-symbols-outlined text-5xl mb-2 text-emerald-400">dialpad</span>
         <h3 class="font-black text-lg mb-2">ARS 통화 다이얼 검증</h3>
-        <p class="text-xs text-slate-400 font-bold mb-6">폴더폰 소지자용. 발신자번호(CID)와<br>입력된 다이얼 번호를 검증합니다.[cite: 1]</p>
-        <button class="btn bg-emerald-500 text-white border border-emerald-400" onclick="simulateAuth('ARS_DIAL', 'ARS 다이얼 검증 완료', '발신자 번호(CID)와 기지국 위치가 성공적으로 대사되었습니다.[cite: 1]')">1855-0000 가상 통화 발신</button>
+        <p class="text-xs text-slate-400 font-bold mb-6">폴더폰 소지자용. 발신자번호(CID)와<br>입력된 다이얼 번호를 검증합니다.</p>
+        <button class="btn bg-emerald-500 text-white border border-emerald-400" onclick="simulateAuth('ARS_DIAL', 'ARS 다이얼 검증 완료', '발신자 번호(CID)와 기지국 위치가 성공적으로 대사되었습니다.')">1855-0000 가상 통화 발신</button>
       </div>
     </div>
 
     <!-- ==================== 김안심 (현장 리더) 뷰 ==================== -->
     <div id="view-l-home" class="hidden">
-      <h2 class="text-xl font-black text-slate-800 mb-1">적응형 그룹 간격 분석부[cite: 1]</h2>
+      <h2 class="text-xl font-black text-slate-800 mb-1">적응형 그룹 간격 분석부</h2>
       <p class="text-xs font-bold text-slate-500 mb-4">5인 1조 상호 거리에 따른 푸시 주기 자동 제어</p>
       
       <div class="card p-0 overflow-hidden mb-6">
@@ -225,7 +235,7 @@
         <div class="bg-slate-50 p-4 border-t border-slate-100 flex justify-between items-center">
           <div>
             <p class="text-[10px] font-black text-slate-500 mb-1">시스템 판정 상태</p>
-            <p class="text-sm font-black text-emerald-600" id="radar-msg">정상 군집 (푸시 주기 연장됨)[cite: 1]</p>
+            <p class="text-sm font-black text-emerald-600" id="radar-msg">정상 군집 (푸시 주기 연장됨)</p>
           </div>
           <span class="material-symbols-outlined text-emerald-500 text-3xl" id="radar-icon">check_circle</span>
         </div>
@@ -246,7 +256,7 @@
     <!-- 리더: QR 및 PIN 발급기 -->
     <div id="view-l-qr" class="hidden">
       <div class="card text-center py-8">
-        <h2 class="text-xl font-black text-slate-800 mb-1">시변 동적 식별코드[cite: 1]</h2>
+        <h2 class="text-xl font-black text-slate-800 mb-1">시변 동적 식별코드</h2>
         <p class="text-xs text-slate-500 font-bold mb-6">30초 단위로 갱신되는 1회용 난수 토큰</p>
         
         <div class="relative w-48 h-48 mx-auto bg-white rounded-2xl grid place-items-center mb-6 border-4 border-blue-100 p-2">
@@ -262,7 +272,7 @@
         
         <div class="bg-slate-800 p-5 rounded-2xl text-left flex items-center justify-between">
           <div>
-            <p class="text-[10px] font-black text-slate-400 mb-1">B-1 경로 암호(Cell-ID 대사용)[cite: 1]</p>
+            <p class="text-[10px] font-black text-slate-400 mb-1">B-1 경로 암호(Cell-ID 대사용)</p>
             <p class="text-xs font-bold text-slate-500">참여자에게 구두 공유</p>
           </div>
           <div class="text-4xl font-black text-emerald-400 tracking-widest" id="dynamic-pin">57</div>
@@ -274,7 +284,7 @@
     <div id="view-l-sign" class="hidden">
       <div class="card">
         <div class="flex justify-between items-center mb-4">
-          <h2 class="text-lg font-black text-slate-800">단말기 미소지자 서명[cite: 1]</h2>
+          <h2 class="text-lg font-black text-slate-800">단말기 미소지자 서명</h2>
           <span class="bg-purple-100 text-purple-600 text-[10px] font-black px-2 py-1 rounded">경로 B-3</span>
         </div>
         
@@ -295,7 +305,7 @@
 
     <!-- ==================== 지자체 관리자 뷰 ==================== -->
     <div id="view-a-home" class="hidden">
-      <h2 class="text-xl font-black text-slate-800 mb-4">멀티테넌트 통합 관제[cite: 1]</h2>
+      <h2 class="text-xl font-black text-slate-800 mb-4">멀티테넌트 통합 관제</h2>
       
       <select class="w-full p-4 bg-white border-2 border-slate-200 rounded-xl mb-6 text-sm font-black text-slate-800 shadow-sm outline-none">
         <option>🏢 광주광역시청 행정망</option>
@@ -317,12 +327,12 @@
           <div class="flex justify-between text-emerald-600"><span>가로등 고장 제보 보너스</span><span>+2,000 P</span></div>
           <div class="flex justify-between border-t border-slate-200 mt-2 pt-2 text-slate-800 text-sm font-black"><span>최종 지급액</span><span>17,000 P</span></div>
         </div>
-        <button class="btn bg-slate-900 text-white" onclick="showModal('settle')">지역화폐 자동 지급 명령 (API 연동)[cite: 1]</button>
+        <button class="btn bg-slate-900 text-white" onclick="showModal('settle')">지역화폐 자동 지급 명령 (API 연동)</button>
       </div>
 
       <div class="card border-l-4 border-red-500 bg-red-50 relative overflow-hidden">
         <span class="material-symbols-outlined absolute -right-2 -top-2 text-red-100" style="font-size:100px">delete_forever</span>
-        <h3 class="font-black text-red-800 text-sm mb-2 relative z-10">개인정보 3단계 영구 파기[cite: 1]</h3>
+        <h3 class="font-black text-red-800 text-sm mb-2 relative z-10">개인정보 3단계 영구 파기</h3>
         <p class="text-xs font-bold text-red-600 mb-5 relative z-10">정산 완료 데이터 사후 유출 차단 조치</p>
         <button class="btn bg-red-600 text-white shadow-[0_4px_12px_rgba(220,38,38,0.3)] relative z-10" onclick="startPurge()">DB 자동삭제 모듈(Purge) 가동</button>
         
@@ -356,6 +366,17 @@
 </div>
 
 <script>
+  /* Splash Screen Logic (3초 후 페이드아웃) */
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      const splash = $('splash-screen');
+      splash.style.opacity = '0';
+      setTimeout(() => {
+        splash.remove();
+      }, 500); // CSS transition delay 대기 후 완전 제거
+    }, 3000);
+  });
+
   /* Global State */
   let currentRole = null;
   let isOffline = false;
@@ -445,7 +466,7 @@
     $(`tab-${num}`).classList.remove('hidden');
   }
 
-  /* 참여자 기능: 오프라인 큐 & 해시 로직[cite: 1] */
+  /* 참여자 기능: 오프라인 큐 & 해시 로직 */
   function updatePTimer() {
     pSec++;
     const h = String(Math.floor(pSec/3600)).padStart(2,'0');
@@ -479,7 +500,7 @@
   function verifyPIN() {
     const pin = $('pin-input').value;
     if(!pin) return alert("PIN을 입력하세요");
-    processEvent('PIN_VERIFY', 'B-1 경로 인증 완료', '기지국(Cell-ID) 대사 및 암호 검증이 완료되었습니다.[cite: 1]');
+    processEvent('PIN_VERIFY', 'B-1 경로 인증 완료', '기지국(Cell-ID) 대사 및 암호 검증이 완료되었습니다.');
   }
 
   /* 리더 기능: QR, 캔버스, 레이더 */
@@ -529,7 +550,7 @@
   }
 
   function submitSign() {
-    buildModal('서명 대행(B-3) 완료', '단말기 미소지자의 수기 서명 이미지와 대행 플래그가 전송되었습니다.[cite: 1]', 'send', 'text-purple-600');
+    buildModal('서명 대행(B-3) 완료', '단말기 미소지자의 수기 서명 이미지와 대행 플래그가 전송되었습니다.', 'send', 'text-purple-600');
     ctx.clearRect(0,0,canvas.width,canvas.height);
   }
 
@@ -539,8 +560,8 @@
     $('btn-offline').classList.toggle('active-red', isOffline);
     
     if(!isOffline && offlineQueue.length > 0) {
-      // 온라인 복귀 시 일괄 동기화 (Batch Upload)[cite: 1]
-      buildModal('통신망 재연결 동기화', `${offlineQueue.length}개의 해시 체인 패킷이 단조시계 무결성 검증을 거쳐 소급 승인되었습니다.[cite: 1]`, 'cloud_sync', 'text-emerald-500');
+      // 온라인 복귀 시 일괄 동기화 (Batch Upload)
+      buildModal('통신망 재연결 동기화', `${offlineQueue.length}개의 해시 체인 패킷이 단조시계 무결성 검증을 거쳐 소급 승인되었습니다.`, 'cloud_sync', 'text-emerald-500');
       offlineQueue = [];
       if($('p-queue-cnt')) $('p-queue-cnt').innerText = 0;
     }
@@ -553,7 +574,7 @@
       <div class="text-center">
         <span class="material-symbols-outlined text-5xl text-blue-500 mb-3 animate-bounce">notifications_active</span>
         <h3 class="font-black text-xl mb-1 text-slate-800">1회성 위치 스냅샷 요청</h3>
-        <p class="text-[10px] text-slate-500 font-bold mb-4 bg-slate-100 py-1 rounded">제2모드: 무작위 발생 이벤트[cite: 1]</p>
+        <p class="text-[10px] text-slate-500 font-bold mb-4 bg-slate-100 py-1 rounded">제2모드: 무작위 발생 이벤트</p>
         <p class="text-sm font-black text-slate-700 bg-blue-50 p-4 rounded-xl border border-blue-100 mb-5">현재 지정된 현장에 계십니까?<br><span class="text-blue-600 mt-1 block">위치정보는 단 1회 전송 후 파기됩니다.</span></p>
         <button class="btn btn-primary w-full shadow-lg" onclick="acceptPush()">명시적 동의 및 제출 (Consent Flag)</button>
       </div>
@@ -564,12 +585,12 @@
 
   function acceptPush() {
     closeModal();
-    processEvent('PUSH_SNAPSHOT', '스냅샷 파기 완료', '단일 시점 휘발성 위치 좌표가 추출 및 승인된 직후 메모리에서 완전 삭제되었습니다.[cite: 1]');
+    processEvent('PUSH_SNAPSHOT', '스냅샷 파기 완료', '단일 시점 휘발성 위치 좌표가 추출 및 승인된 직후 메모리에서 완전 삭제되었습니다.');
   }
 
   function triggerAnomaly() {
     if(currentRole !== 'participant') return showToast("오류", "참여자(윤정환) 뷰에서만 작동합니다.", "error", "text-red-500");
-    buildModal('시공간 이동 이상치 탐지 🚨', '물리적으로 불가능한 이동 속도(v = dx/dt > v_th)가 감지되어 대리 출석 어뷰징으로 차단되었습니다.[cite: 1]', 'gavel', 'text-red-600');
+    buildModal('시공간 이동 이상치 탐지 🚨', '물리적으로 불가능한 이동 속도(v = dx/dt > v_th)가 감지되어 대리 출석 어뷰징으로 차단되었습니다.', 'gavel', 'text-red-600');
   }
 
   function triggerGroupDeviation() {
@@ -580,15 +601,15 @@
     dot.style.left = '85%';
     dot.classList.add('dot-red');
     
-    $('radar-msg').innerText = "이탈 감지 (집중 추적 모드 전환)[cite: 1]";
+    $('radar-msg').innerText = "이탈 감지 (집중 추적 모드 전환)";
     $('radar-msg').className = "text-sm font-black text-red-600";
     $('radar-icon').innerText = "warning";
     $('radar-icon').className = "material-symbols-outlined text-red-500 text-3xl animate-pulse";
     
-    showToast("그룹 간격 분석부", "윤정환 님이 30m 임계 반경을 이탈했습니다. 해당 인원의 푸시 주기를 단축합니다.[cite: 1]", "radar", "text-red-500");
+    showToast("그룹 간격 분석부", "윤정환 님이 30m 임계 반경을 이탈했습니다. 해당 인원의 푸시 주기를 단축합니다.", "radar", "text-red-500");
   }
 
-  /* 관리자 Purge 로직[cite: 1] */
+  /* 관리자 Purge 로직 */
   function startPurge() {
     $('purge-box').classList.remove('hidden');
     
@@ -605,14 +626,14 @@
     step('p-b3', 'p-s3', 2500);
 
     setTimeout(() => {
-      buildModal('영구 파기 완료', '개인정보보호법에 의거, 정산이 완료된 모든 위치 메타데이터가 DB에서 영구 삭제(Purge) 되었습니다.[cite: 1]', 'delete_sweep', 'text-red-600');
+      buildModal('영구 파기 완료', '개인정보보호법에 의거, 정산이 완료된 모든 위치 메타데이터가 DB에서 영구 삭제(Purge) 되었습니다.', 'delete_sweep', 'text-red-600');
     }, 3200);
   }
 
   /* UI 헬퍼 */
   function showModal(type) {
     if(type === 'settle') {
-      buildModal('지역화폐 차등 정산[cite: 1]', '조례 기준 1.5배 가중치 및 야간/제보 보너스가 적용되어 17,000 P가 광주상생카드 계좌로 지급되었습니다.', 'payments', 'text-blue-600');
+      buildModal('지역화폐 차등 정산', '조례 기준 1.5배 가중치 및 야간/제보 보너스가 적용되어 17,000 P가 광주상생카드 계좌로 지급되었습니다.', 'payments', 'text-blue-600');
     }
   }
 
