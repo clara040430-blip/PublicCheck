@@ -15,16 +15,18 @@
   #splash-screen { position: absolute; inset: 0; z-index: 9999; background: #0b1220; display: flex; justify-content: center; align-items: center; transition: opacity 0.5s ease; }
   #splash-screen img { width: 100%; height: 100%; object-fit: cover; }
 
-  /* Top Simulator Control Bar (Global Event Trigger) */
-  .sim-bar { background: #0f172a; color: white; padding: 12px; font-size: 11px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: space-between; align-items: center; z-index: 50; border-bottom: 2px solid #334155; }
-  .sim-title { font-weight: 900; color: #38bdf8; width: 100%; margin-bottom: 4px; display: flex; justify-content: space-between; }
-  .sim-btn { background: #1e293b; padding: 6px 10px; border-radius: 6px; cursor: pointer; transition: 0.2s; border: 1px solid #475569; font-weight: bold; flex: 1; text-align: center; }
-  .sim-btn:hover { background: #334155; }
-  .sim-btn.active-red { background: #ef4444; color: white; border-color: #ef4444; }
-  .sim-btn.active-blue { background: #3b82f6; color: white; border-color: #3b82f6; }
+  /* 💡 새롭게 리디자인된 Top Simulator Control Bar */
+  .sim-bar { background: #0f172a; padding: 12px 16px; border-bottom: 1px solid #1e293b; display: flex; flex-direction: column; z-index: 50; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .sim-btn { flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; gap: 4px; padding: 8px 14px; border-radius: 20px; font-size: 11px; font-weight: 900; color: #38bdf8; background: #0284c720; border: 1px solid #0ea5e930; transition: 0.2s; cursor: pointer; }
+  .sim-btn:hover { background: #0284c740; }
+  .sim-btn.purple { color: #c084fc; background: #9333ea20; border-color: #a855f730; }
+  .sim-btn.red { color: #f87171; background: #dc262620; border-color: #ef444430; }
+  .sim-btn.yellow { color: #facc15; background: #ca8a0420; border-color: #eab30830; }
+  .sim-btn.active-offline { background: #ef4444 !important; color: white !important; border-color: #ef4444 !important; }
 
   /* App Shell */
-  .header { padding: 18px 20px; background: white; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; }
+  .header { padding: 16px 20px; background: white; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; }
   .content { flex: 1; overflow-y: auto; padding: 20px; padding-bottom: 100px; background: #f1f5f9; }
   .bottom-nav { position: absolute; bottom: 0; width: 100%; background: rgba(255, 255, 255, 0.98); border-top: 1px solid #e2e8f0; display: flex; padding: 12px 0 24px 0; z-index: 40; box-shadow: 0 -4px 15px rgba(0,0,0,0.03); }
   .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; font-size: 11px; color: #94a3b8; font-weight: 800; cursor: pointer; gap: 6px; transition: 0.3s; }
@@ -36,7 +38,6 @@
   .btn { width: 100%; padding: 16px; border-radius: 14px; font-weight: 900; text-align: center; cursor: pointer; transition: 0.2s; font-size: 14px; }
   .btn-primary { background: var(--s); color: white; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); }
   .btn-dark { background: #0f172a; color: white; }
-  .btn-outline { border: 2px solid var(--s); color: var(--s); background: transparent; }
   .hidden { display: none !important; }
   
   /* Modals */
@@ -45,8 +46,8 @@
   .modal-overlay.show { display: flex; }
   .modal-overlay.show .modal-content { transform: scale(1); opacity: 1; }
 
-  /* Interactive Elements */
-  canvas { border: 2px dashed #cbd5e1; border-radius: 12px; width: 100%; height: 160px; background: #f8fafc; cursor: crosshair; }
+  /* 💡 터치 최적화 캔버스 (touch-action: none 필수) */
+  canvas { touch-action: none; border: 2px dashed #cbd5e1; border-radius: 12px; width: 100%; height: 160px; background: #f8fafc; cursor: crosshair; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); }
   
   /* Radar Animation */
   .radar-container { position: relative; width: 100%; height: 200px; background: #020617; border-radius: 16px; overflow: hidden; display: flex; justify-content: center; align-items: center; }
@@ -75,18 +76,27 @@
     <img src="intro.jpg" alt="안심워크 인트로 이미지">
   </div>
 
-  <!-- 시뮬레이터 글로벌 이벤트 바 -->
+  <!-- 💡 새롭게 리디자인된 시뮬레이터 글로벌 바 -->
   <div class="sim-bar">
-    <div class="sim-title"><span>⚙️ 시스템 이벤트 관제</span> <span id="sim-clock" class="text-slate-400">00:00:00</span></div>
-    <button id="btn-offline" class="sim-btn" onclick="toggleOffline()">🌐 통신망 단절</button>
-    <button class="sim-btn text-blue-300" onclick="triggerPush()">🔔 랜덤 푸시</button>
-    <button class="sim-btn text-red-300" onclick="triggerAnomaly()">🚨 시공간 이상치</button>
-    <button class="sim-btn text-yellow-300" onclick="triggerGroupDeviation()">🚶 그룹 이탈</button>
+    <div class="flex justify-between items-center mb-3 w-full">
+      <span class="text-xs font-black text-slate-300">⚙️ 시스템 관제 시뮬레이터</span>
+      <span id="sim-clock" class="text-xs font-mono text-slate-400">00:00:00</span>
+    </div>
+    <div class="flex gap-2 overflow-x-auto w-full pb-1 no-scrollbar">
+      <button id="btn-offline" class="sim-btn" onclick="toggleOffline()"><span class="material-symbols-outlined text-[14px]">wifi_off</span>통신단절</button>
+      <button class="sim-btn purple" onclick="triggerPush()"><span class="material-symbols-outlined text-[14px]">notifications_active</span>랜덤푸시</button>
+      <button class="sim-btn red" onclick="triggerAnomaly()"><span class="material-symbols-outlined text-[14px]">gavel</span>이상치</button>
+      <button class="sim-btn yellow" onclick="triggerGroupDeviation()"><span class="material-symbols-outlined text-[14px]">directions_run</span>그룹이탈</button>
+    </div>
   </div>
 
   <!-- 헤더 -->
   <div class="header">
     <div class="flex items-center gap-2">
+      <!-- 💡 새로 추가된 뒤로가기 버튼 -->
+      <div id="back-btn" class="hidden cursor-pointer bg-slate-100 w-8 h-8 rounded-full flex items-center justify-center hover:bg-slate-200 transition" onclick="goBack()">
+        <span class="material-symbols-outlined text-slate-600 text-lg">arrow_back</span>
+      </div>
       <span class="material-symbols-outlined text-blue-600 text-3xl">shield_moon</span>
       <div>
         <h1 class="font-black text-xl text-slate-800 leading-tight" id="header-title">안심워크</h1>
@@ -288,10 +298,11 @@
           <span class="bg-purple-100 text-purple-600 text-[10px] font-black px-2 py-1 rounded">경로 B-3</span>
         </div>
         
+        <!-- 💡 마스킹된 조원 이름 -->
         <select class="w-full p-4 bg-slate-50 border-2 border-slate-200 rounded-xl mb-4 text-sm font-black text-slate-700 outline-none focus:border-purple-500">
           <option>대상 조원 선택</option>
-          <option>이순자 (2G폰 미소지)</option>
-          <option>박영수 (배터리 방전)</option>
+          <option>이ㅇㅇ (2G폰 미소지)</option>
+          <option>박ㅇㅇ (배터리 방전)</option>
         </select>
 
         <div class="bg-slate-100 p-2 rounded-xl mb-6">
@@ -400,10 +411,29 @@
 
   function $(id) { return document.getElementById(id); }
 
+  /* 💡 새로 추가된 뒤로가기 로직 (새로고침 없이 역할 초기화) */
+  function goBack() {
+    // 타이머 정리
+    clearInterval(pTimer);
+    clearInterval(qrTimer);
+    
+    // 뷰 초기화
+    document.querySelectorAll('.content > div').forEach(d => d.classList.add('hidden'));
+    $('view-login').classList.remove('hidden');
+    
+    // 헤더 상태 원래대로 복구
+    $('header-title').innerText = '안심워크';
+    $('header-sub').innerText = '개인정보 최소수집형 현장검증';
+    $('role-badge').innerText = '계정선택';
+    $('back-btn').classList.add('hidden'); // 뒤로가기 버튼 다시 숨김
+    $('bottom-nav').innerHTML = ''; // 네비게이션 비우기
+  }
+
   /* Navigation & Login */
   function login(role) {
     currentRole = role;
     $('view-login').classList.add('hidden');
+    $('back-btn').classList.remove('hidden'); // 역할 선택 시 뒤로가기 버튼 보이기
     
     if(role === 'participant') {
       $('header-title').innerText = '안심워크';
@@ -427,7 +457,6 @@
         { id: 'view-l-sign', icon: 'draw', text: '대행서명' }
       ]);
       initLeaderQR();
-      setTimeout(initCanvas, 300);
     } 
     else {
       $('header-title').innerText = '통합정산';
@@ -453,6 +482,11 @@
     $(viewId).classList.remove('hidden');
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     if($(`nav-${viewId}`)) $(`nav-${viewId}`).classList.add('active');
+
+    // 💡 캔버스는 화면에 렌더링 된 직후에 초기화 해야 너비/높이를 정상 인식함
+    if(viewId === 'view-l-sign') {
+      setTimeout(initCanvas, 50); 
+    }
   }
 
   /* 탭 스위칭 (참여자 인증 뷰) */
@@ -517,47 +551,83 @@
     }, 1000);
   }
 
+  /* 💡 터치 완벽 대응을 위해 재설계된 캔버스 로직 */
   let canvas, ctx, isDrawing = false;
   function initCanvas() {
     canvas = $('sign-pad');
     if(!canvas) return;
-    ctx = canvas.getContext('2d');
+    
+    // 메모리 내 캔버스 사이즈 물리적으로 일치시킴
     canvas.width = canvas.offsetWidth;
     canvas.height = canvas.offsetHeight;
+    ctx = canvas.getContext('2d');
     
-    const start = (e) => { isDrawing = true; draw(e); };
-    const end = () => { isDrawing = false; ctx.beginPath(); };
-    const draw = (e) => {
-      if(!isDrawing) return;
+    // 정확한 터치/마우스 좌표 계산 헬퍼 함수
+    const getPos = (e) => {
       const rect = canvas.getBoundingClientRect();
-      const x = (e.clientX || e.touches?.[0].clientX) - rect.left;
-      const y = (e.clientY || e.touches?.[0].clientY) - rect.top;
+      if(e.touches && e.touches.length > 0) {
+        return { x: e.touches[0].clientX - rect.left, y: e.touches[0].clientY - rect.top };
+      }
+      return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    };
+
+    const draw = (x, y, isMove) => {
       ctx.lineWidth = 4;
       ctx.lineCap = 'round';
-      ctx.strokeStyle = '#6b21a8'; // purple-800
-      ctx.lineTo(x, y);
-      ctx.stroke();
+      ctx.strokeStyle = '#6b21a8'; // 보라색 잉크
+      if(isMove) {
+        ctx.lineTo(x, y);
+        ctx.stroke();
+      }
       ctx.beginPath();
       ctx.moveTo(x, y);
     };
 
+    const start = (e) => { 
+      isDrawing = true; 
+      e.preventDefault(); 
+      const pos = getPos(e); 
+      draw(pos.x, pos.y, false); 
+    };
+    const end = (e) => { 
+      isDrawing = false; 
+      ctx.beginPath(); 
+    };
+    const move = (e) => { 
+      if(!isDrawing) return; 
+      e.preventDefault(); // 스크롤 완전 차단
+      const pos = getPos(e); 
+      draw(pos.x, pos.y, true); 
+    };
+
+    // 기존 이벤트 리스너가 중복 등록되지 않도록 캔버스 복제 후 교체 (클린업)
+    const newCanvas = canvas.cloneNode(true);
+    canvas.parentNode.replaceChild(newCanvas, canvas);
+    canvas = newCanvas;
+    ctx = canvas.getContext('2d');
+
+    // 마우스 이벤트 등록
     canvas.addEventListener('mousedown', start);
     canvas.addEventListener('mouseup', end);
-    canvas.addEventListener('mousemove', draw);
-    canvas.addEventListener('touchstart', (e)=>{ e.preventDefault(); start(e); });
+    canvas.addEventListener('mousemove', move);
+    canvas.addEventListener('mouseleave', end);
+    
+    // 터치 이벤트 등록 (passive: false를 주어 확실히 스크롤 차단)
+    canvas.addEventListener('touchstart', start, { passive: false });
     canvas.addEventListener('touchend', end);
-    canvas.addEventListener('touchmove', (e)=>{ e.preventDefault(); draw(e); });
+    canvas.addEventListener('touchmove', move, { passive: false });
   }
 
   function submitSign() {
     buildModal('서명 대행(B-3) 완료', '단말기 미소지자의 수기 서명 이미지와 대행 플래그가 전송되었습니다.', 'send', 'text-purple-600');
-    ctx.clearRect(0,0,canvas.width,canvas.height);
+    // 전송 후 캔버스 초기화
+    if(canvas && ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
   }
 
   /* 글로벌 관제 시뮬레이터 로직 */
   function toggleOffline() {
     isOffline = !isOffline;
-    $('btn-offline').classList.toggle('active-red', isOffline);
+    $('btn-offline').classList.toggle('active-offline', isOffline);
     
     if(!isOffline && offlineQueue.length > 0) {
       // 온라인 복귀 시 일괄 동기화 (Batch Upload)
@@ -655,7 +725,6 @@
   }
 
   function showToast(title, desc, icon, iconColor) {
-    // 간이 토스트 (모달 대신 상단 알림)
     buildModal(title, desc, icon, iconColor);
   }
 
